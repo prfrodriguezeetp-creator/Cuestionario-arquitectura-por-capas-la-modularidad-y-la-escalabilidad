@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Cuestionario: Optimización y Fundamentos de Software</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f5efe8 0%, #fae9e9 100%);
+            font-family: 'Segoe UI', 'Roboto', system-ui, sans-serif;
+            padding: 1rem;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quiz-wrapper {
+            max-width: 780px;
+            width: 100%;
+            margin: 0 auto;
+            background: #fffef7;
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(210, 180, 160, 0.25);
+            padding: 1.5rem;
+            transition: all 0.2s;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 1.2rem;
+            border-bottom: 2px solid #f3e0d0;
+            padding-bottom: 0.7rem;
+        }
+
+        .header h1 {
+            font-size: 1.7rem;
+            background: linear-gradient(135deg, #b0a07c, #c9a9a9);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.2px;
+        }
+
+        .sub {
+            color: #b0a0a0;
+            font-size: 0.85rem;
+            margin-top: 0.2rem;
+        }
+
+        .progress-area {
+            background: #faf2e8;
+            border-radius: 2rem;
+            padding: 0.5rem 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #7a6a5a;
+        }
+
+        .question-counter {
+            font-weight: 600;
+            background: #e6d9d0;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+        }
+
+        .score-badge {
+            background: #d4e0e8;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            font-weight: 500;
+        }
+
+        .question-card {
+            background: #ffffff;
+            border-radius: 1.5rem;
+            padding: 1.3rem;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            border: 1px solid #f2e4da;
+        }
+
+        .question-text {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #5a4a3a;
+            margin-bottom: 1.2rem;
+            line-height: 1.4;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .option {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            cursor: pointer;
+            padding: 0.6rem 0.8rem;
+            border-radius: 1rem;
+            background: #fefaf5;
+            border: 1px solid #eeddcc;
+            transition: all 0.15s;
+        }
+
+        .option:hover {
+            background: #fff4ea;
+            border-color: #d4bcac;
+        }
+
+        input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 1.2rem;
+            height: 1.2rem;
+            border: 2px solid #c0a898;
+            border-radius: 50%;
+            margin-top: 0.1rem;
+            cursor: pointer;
+            background: white;
+            flex-shrink: 0;
+        }
+
+        input[type="radio"]:checked {
+            background-color: #8fbc8f;
+            border-color: #8fbc8f;
+            box-shadow: inset 0 0 0 3px white;
+        }
+
+        .option label {
+            flex: 1;
+            font-size: 0.93rem;
+            line-height: 1.4;
+            cursor: pointer;
+            color: #6a5a4a;
+            font-weight: 500;
+        }
+
+        .feedback {
+            margin-top: 0.8rem;
+            padding: 0.7rem 1rem;
+            border-radius: 1rem;
+            font-size: 0.85rem;
+            background: #fef7e8;
+            border-left: 5px solid;
+            line-height: 1.4;
+            color: #5e5a5a;
+        }
+
+        .feedback.correct {
+            border-left-color: #9bc4a0;
+            background: #f0f9ef;
+        }
+
+        .feedback.incorrect {
+            border-left-color: #e6b8b8;
+            background: #fff5f0;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .btn {
+            border: none;
+            background: #e2d4cc;
+            color: #7a6a5a;
+            font-weight: 600;
+            padding: 0.6rem 1.3rem;
+            border-radius: 60px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .btn-primary {
+            background: #cfe3cf;
+            color: #5a6e5a;
+        }
+
+        .btn-primary:hover {
+            background: #bdd8bd;
+            transform: scale(1.02);
+        }
+
+        .btn-secondary {
+            background: #f0e0d8;
+            color: #8a6a6a;
+        }
+
+        .btn-secondary:hover {
+            background: #e8d0c8;
+        }
+
+        .btn-reset {
+            background: #ffe0b5;
+            color: #b87c4a;
+        }
+
+        .btn-reset:hover {
+            background: #ffd6a0;
+        }
+
+        .results-area {
+            margin-top: 1.5rem;
+            background: #fcf8f0;
+            border-radius: 1.2rem;
+            padding: 1rem;
+            border: 1px solid #eeddcc;
+            display: none;
+        }
+
+        .results-area h3 {
+            color: #8a6e5e;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-summary {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-weight: bold;
+            color: #7a6a5a;
+        }
+
+        .result-detail {
+            max-height: 260px;
+            overflow-y: auto;
+            font-size: 0.8rem;
+        }
+
+        .result-item {
+            padding: 0.4rem;
+            border-bottom: 1px solid #eeddcc;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.7rem;
+            margin-top: 1.2rem;
+            color: #c0b0a0;
+        }
+
+        @media (max-width: 550px) {
+            .quiz-wrapper {
+                padding: 1rem;
+            }
+            .question-text {
+                font-size: 0.95rem;
+            }
+            .option label {
+                font-size: 0.85rem;
+            }
+            .btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="quiz-wrapper">
+    <div class="header">
+        <h1>⚙️ Optimización y Fundamentos de Software</h1>
+        <div class="sub">Modularidad, arquitectura, bases de datos y rendimiento</div>
+    </div>
+
+    <div class="progress-area">
+        <span class="question-counter" id="questionCounter">Pregunta 1 / 20</span>
+        <span class="score-badge" id="liveScore">✅ Aciertos: 0</span>
+    </div>
+
+    <div id="questionContainer"></div>
+
+    <div class="nav-buttons">
+        <button id="prevBtn" class="btn btn-secondary">◀ Anterior</button>
+        <button id="nextBtn" class="btn btn-primary">Siguiente ▶</button>
+        <button id="resetBtn" class="btn btn-reset">⟳ Reiniciar</button>
+    </div>
+
+    <div id="resultsPanel" class="results-area"></div>
+    <footer>📌 Selecciona una opción → retroalimentación inmediata. Al finalizar, revisa tu puntuación.</footer>
+</div>
+
+<script>
+    // ==================== DATOS DEL CUESTIONARIO (20 preguntas) ====================
+    const questionsData = [
+        { text: "¿Cuál es el propósito principal de la modularidad en el diseño de sistemas de software?",
+          options: ["Aumentar la velocidad de procesamiento de la CPU mediante la división de hilos.", "Dividir el sistema en componentes independientes para simplificar el desarrollo, las pruebas y la gestión de la complejidad.", "Garantizar que los datos sean persistentes en una base de datos relacional."],
+          correct: "B",
+          explanation: "Correcta (B): La modularidad permite construir sistemas robustos al aislar módulos que pueden ser probados y desarrollados por separado. A es incorrecta (se refiere a hilos, no a organización de código); C es incorrecta (persistencia es función de la capa de datos)."
+        },
+        { text: "En una arquitectura de tres capas, ¿de qué se encarga específicamente la capa de presentación?",
+          options: ["Gestionar la lógica de negocio y los algoritmos del sistema.", "Proporcionar la interfaz de usuario (UI) y gestionar la interacción intuitiva, la entrada y visualización de datos.", "Ejecutar consultas CRUD directamente sobre la base de datos."],
+          correct: "B",
+          explanation: "Correcta (B): Se enfoca en la experiencia del usuario y adapta la información para diferentes dispositivos. A es la capa de lógica de negocio; C es la capa de acceso a datos."
+        },
+        { text: "¿Qué diferencia principal existe entre los algoritmos de planificación de CPU FIFO y Round Robin?",
+          options: ["FIFO asigna un tiempo limitado a cada proceso, mientras que Round Robin los ejecuta por orden de llegada.", "Ambos algoritmos son exclusivos para la gestión de memoria RAM.", "FIFO ejecuta procesos según su llegada y Round Robin asigna una porción equitativa de tiempo a cada tarea antes de pasar a la siguiente."],
+          correct: "C",
+          explanation: "Correcta (C): FIFO es por orden de llegada; Round Robin asigna un quantum de tiempo equitativo. A es al revés; B es falso (son algoritmos de planificación de CPU)."
+        },
+        { text: "¿En qué consiste la técnica de 'paginación' en la administración de memoria del sistema operativo?",
+          options: ["Divide la memoria en bloques lógicos de tamaño variable según la necesidad del proceso.", "Divide la memoria en bloques fijos llamados páginas para optimizar el uso de la RAM.", "Es un método para comprimir archivos en el disco duro."],
+          correct: "B",
+          explanation: "Correcta (B): La paginación usa bloques fijos (páginas) para gestionar memoria virtual. A es segmentación; C es almacenamiento secundario."
+        },
+        { text: "¿Cuál es una de las principales ventajas de utilizar colecciones inmutables en el desarrollo de software?",
+          options: ["Permiten que el estado del objeto cambie dinámicamente en cualquier momento de la ejecución.", "Son inherentemente seguras para hilos (thread-safe), eliminando la necesidad de mecanismos de sincronización complejos.", "Aumentan el consumo de memoria al requerir duplicados constantes para cada pequeña operación."],
+          correct: "B",
+          explanation: "Correcta (B): Al no poder modificarse, son seguras para concurrencia. A es falso (inmutable no cambia); C es una desventaja, no la ventaja principal."
+        },
+        { text: "¿Por qué se recomienda el uso de `SparseArray` en lugar de `HashMap` en Android para mapear enteros a objetos?",
+          options: ["Porque `SparseArray` permite almacenar datos en la nube automáticamente.", "Porque evita el 'autoboxing' de tipos primitivos, lo que reduce el consumo de memoria en entornos móviles limitados.", "Porque es capaz de manejar relaciones de grafos complejos de forma más rápida."],
+          correct: "B",
+          explanation: "Correcta (B): Evita autoboxing al usar claves enteras primitivas, más eficiente en memoria. A es falso; C no es su propósito."
+        },
+        { text: "¿Qué función cumple la librería Room en el ecosistema de Android?",
+          options: ["Es un motor de base de datos no relacional que compite con Firebase.", "Es una capa de abstracción sobre SQLite que proporciona verificación de consultas en tiempo de compilación.", "Sirve para diseñar la interfaz de usuario de las aplicaciones mediante drag-and-drop."],
+          correct: "B",
+          explanation: "Correcta (B): Room abstrae SQLite, verificando consultas en compilación. A es falso (SQLite es relacional); C es para UI."
+        },
+        { text: "En el contexto de bases de datos, ¿qué garantiza el acrónimo ACID?",
+          options: ["Que la base de datos es no relacional y altamente escalable horizontalmente.", "La gestión estructurada de datos bajo principios de Atomicidad, Consistencia, Aislamiento y Durabilidad.", "Que los datos se sincronizan en tiempo real con todos los dispositivos conectados."],
+          correct: "B",
+          explanation: "Correcta (B): ACID garantiza integridad de transacciones. A es característico de NoSQL; C es sincronización en tiempo real (Firebase)."
+        },
+        { text: "¿Cuál es una característica distintiva de las bases de datos NoSQL como Realm o Firebase en Android?",
+          options: ["Requieren un esquema rígido y consultas SQL complejas para funcionar.", "No permiten el almacenamiento de datos de forma local en el dispositivo.", "Ofrecen flexibilidad de esquema y son ideales para datos semi-estructurados o que requieren sincronización en tiempo real."],
+          correct: "C",
+          explanation: "Correcta (C): NoSQL ofrece flexibilidad de esquema y sincronización en tiempo real. A es falso (esquema flexible); B es falso (Realm es local)."
+        },
+        { text: "¿Cuál es el impacto negativo de crear demasiados índices en una base de datos?",
+          options: ["Las consultas de lectura (`SELECT`) se vuelven extremadamente lentas.", "Se penaliza el rendimiento de las operaciones de escritura (`INSERT`, `UPDATE`, `DELETE`).", "El tamaño de la base de datos en disco se reduce significativamente."],
+          correct: "B",
+          explanation: "Correcta (B): Cada escritura requiere actualizar índices, ralentizando modificaciones. A es falso (aceleran lecturas); C es falso (ocupan más espacio)."
+        },
+        { text: "¿Para qué se utiliza el comando `ANALYZE` en SQLite dentro de Android?",
+          options: ["Para borrar todos los datos corruptos de la base de datos.", "Para ayudar al optimizador de consultas a elegir el mejor plan de ejecución mediante la recopilación de estadísticas de distribución de datos.", "Para encriptar la base de datos contra accesos no autorizados."],
+          correct: "B",
+          explanation: "Correcta (B): ANALYZE recopila estadísticas para que el optimizador elija mejores planes. A y C no son su función."
+        },
+        { text: "En la optimización de consultas, ¿por qué es recomendable evitar el uso de `SELECT *`?",
+          options: ["Porque SQLite no reconoce el símbolo del asterisco.", "Porque reduce la cantidad de datos que deben leerse y transferirse, mejorando el rendimiento al pedir solo las columnas necesarias.", "Porque `SELECT *` borra accidentalmente los índices creados."],
+          correct: "B",
+          explanation: "Correcta (B): SELECT * trae columnas innecesarias, desperdiciando recursos. A es falso (sintaxis válida); C es falso."
+        },
+        { text: "¿Qué función cumplen los 'drivers' en un sistema operativo?",
+          options: ["Actúan como traductores entre el sistema operativo y los dispositivos de hardware.", "Son algoritmos que deciden qué proceso debe usar la CPU.", "Se encargan de la personalización estética de la interfaz de usuario."],
+          correct: "A",
+          explanation: "Correcta (A): Los drivers traducen comandos del SO a hardware específico. B es el planificador; C es UI."
+        },
+        { text: "¿Qué beneficio aporta la personalización de software mediante plugins o extensiones?",
+          options: ["Obliga a rediseñar todo el núcleo del sistema para cada nuevo usuario.", "Permite añadir funcionalidades específicas (como pasarelas de pago) sin alterar la arquitectura central del programa.", "Reduce la seguridad del sistema al permitir que cualquier código externo se ejecute sin permisos."],
+          correct: "B",
+          explanation: "Correcta (B): Los plugins extienden funcionalidad sin modificar el núcleo. A es falso; C es una desventaja potencial no inherente al beneficio."
+        },
+        { text: "¿Cuál es una tendencia futura clave mencionada para los sistemas de software?",
+          options: ["El retorno a sistemas monolíticos sin capas para evitar la complejidad.", "El uso de Inteligencia Artificial (IA) y Aprendizaje Automático (ML) para crear sistemas más adaptativos y automatizados.", "La eliminación total de la computación en la nube por problemas de privacidad."],
+          correct: "B",
+          explanation: "Correcta (B): IA/ML son tendencias clave para sistemas adaptativos. A es falso (no se vuelve a monolítico); C es falso (la nube sigue siendo fundamental)."
+        },
+        { text: "¿Qué diferencia a un 'Índice Compuesto' de un 'Índice Simple'?",
+          options: ["El índice compuesto solo se puede usar en bases de datos NoSQL.", "El índice simple involucra múltiples columnas, mientras que el compuesto solo una.", "El índice compuesto involucra múltiples columnas y su orden es crucial para reflejar las cláusulas de las consultas."],
+          correct: "C",
+          explanation: "Correcta (C): Índice compuesto abarca varias columnas; el orden importa. A es falso (se usa en SQL); B es al revés."
+        },
+        { text: "¿Qué se entiende por escalabilidad vertical en un sistema?",
+          options: ["Añadir más nodos o servidores al sistema para repartir la carga.", "Aumentar la capacidad de los nodos existentes (más RAM, mejor CPU).", "Cambiar el lenguaje de programación de la aplicación por uno más moderno."],
+          correct: "B",
+          explanation: "Correcta (B): Escalabilidad vertical = mejorar el hardware del nodo existente. A es horizontal; C no es escalabilidad."
+        },
+        { text: "¿Cómo ayuda la cláusula `LIMIT` en la optimización de bases de datos Android?",
+          options: ["Evita que la base de datos crezca más allá de un tamaño de archivo específico.", "Es esencial para la paginación de datos, pidiendo solo el subconjunto de resultados necesarios en un momento dado.", "Limita el número de usuarios que pueden acceder a la aplicación simultáneamente."],
+          correct: "B",
+          explanation: "Correcta (B): LIMIT permite paginación, reduciendo carga de memoria. A es falso; C es control de concurrencia."
+        },
+        { text: "¿Cuál es la función de la capa de 'Lógica de Negocio'?",
+          options: ["Conectarse a internet para descargar actualizaciones.", "Implementar los algoritmos, validaciones y procesos que gobiernan el comportamiento y funcionalidad principal del sistema.", "Almacenar físicamente los archivos de imagen de la aplicación."],
+          correct: "B",
+          explanation: "Correcta (B): La lógica de negocio es el cerebro del sistema, con reglas y procesos. A es red; C es almacenamiento."
+        },
+        { text: "¿Qué ventaja ofrece `LongSparseArray` sobre un `HashMap<Long, Object>`?",
+          options: ["Permite realizar búsquedas de texto completo en lenguaje natural.", "Ofrece beneficios de eficiencia de memoria al evitar el autoboxing de claves de tipo `long` en dispositivos móviles.", "Es la única estructura compatible con bases de datos relacionales."],
+          correct: "B",
+          explanation: "Correcta (B): LongSparseArray evita autoboxing de long, optimizando memoria. A es falso; C es falso (es una colección en memoria)."
+        }
+    ];
+
+    let userAnswers = new Array(20).fill(null);
+    let currentIndex = 0;
+
+    const questionContainer = document.getElementById('questionContainer');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const questionCounterSpan = document.getElementById('questionCounter');
+    const liveScoreSpan = document.getElementById('liveScore');
+    const resultsPanel = document.getElementById('resultsPanel');
+
+    function updateLiveScore() {
+        let correctCount = 0;
+        for (let i = 0; i < userAnswers.length; i++) {
+            if (userAnswers[i] && userAnswers[i] === questionsData[i].correct) correctCount++;
+        }
+        liveScoreSpan.textContent = `✅ Aciertos: ${correctCount} / 20`;
+        return correctCount;
+    }
+
+    function saveAnswer(selectedLetter) {
+        userAnswers[currentIndex] = selectedLetter;
+        updateLiveScore();
+        renderCurrentQuestion();
+    }
+
+    function renderCurrentQuestion() {
+        const q = questionsData[currentIndex];
+        const selected = userAnswers[currentIndex];
+        const letters = ['A', 'B', 'C'];
+        let optionsHtml = '';
+        q.options.forEach((opt, idx) => {
+            const letter = letters[idx];
+            const isChecked = (selected === letter);
+            optionsHtml += `
+                <div class="option" data-letter="${letter}">
+                    <input type="radio" name="question" value="${letter}" id="opt_${letter}" ${isChecked ? 'checked' : ''}>
+                    <label for="opt_${letter}"><strong>${letter})</strong> ${opt}</label>
+                </div>
+            `;
+        });
+
+        let feedbackHtml = '';
+        if (selected) {
+            const isCorrect = (selected === q.correct);
+            const correctLetter = q.correct;
+            const correctText = q.options[letters.indexOf(correctLetter)];
+            const explanation = q.explanation;
+            if (isCorrect) {
+                feedbackHtml = `<div class="feedback correct">✅ <strong>¡Correcto!</strong> ${explanation}</div>`;
+            } else {
+                feedbackHtml = `<div class="feedback incorrect">❌ <strong>Incorrecto.</strong> La respuesta correcta es ${correctLetter}) ${correctText}.<br>${explanation}</div>`;
+            }
+        } else {
+            feedbackHtml = `<div class="feedback" style="border-left-color:#ccc; background:#fef7e8;">⚡ Selecciona una opción para ver la retroalimentación.</div>`;
+        }
+
+        const html = `
+            <div class="question-card">
+                <div class="question-text">${q.text}</div>
+                <div class="options" id="optionsContainer">
+                    ${optionsHtml}
+                </div>
+                ${feedbackHtml}
+            </div>
+        `;
+        questionContainer.innerHTML = html;
+
+        // Event listeners
+        const optionDivs = document.querySelectorAll('.option');
+        optionDivs.forEach(div => {
+            const radio = div.querySelector('input[type="radio"]');
+            const letter = div.getAttribute('data-letter');
+            if (radio) {
+                radio.addEventListener('change', () => {
+                    if (radio.checked) saveAnswer(letter);
+                });
+            }
+            div.addEventListener('click', (e) => {
+                if (e.target.tagName !== 'INPUT') {
+                    const radioInside = div.querySelector('input');
+                    if (radioInside && !radioInside.checked) {
+                        radioInside.checked = true;
+                        saveAnswer(letter);
+                    }
+                }
+            });
+        });
+
+        questionCounterSpan.textContent = `Pregunta ${currentIndex+1} / 20`;
+    }
+
+    function showFinalResults() {
+        let correctCount = 0;
+        let detailsHtml = '';
+        for (let i = 0; i < questionsData.length; i++) {
+            const q = questionsData[i];
+            const userAns = userAnswers[i];
+            const isCorrect = (userAns === q.correct);
+            if (isCorrect) correctCount++;
+            const statusIcon = isCorrect ? '✅' : '❌';
+            const userShow = userAns ? userAns : '—';
+            const correctShow = q.correct;
+            detailsHtml += `
+                <div class="result-item">
+                    <span style="min-width: 30px;">${statusIcon}</span>
+                    <span><strong>Pregunta ${i+1}</strong> (Tu respuesta: ${userShow} / Correcta: ${correctShow})</span>
+                </div>
+            `;
+        }
+        const percent = Math.round((correctCount / 20) * 100);
+        resultsPanel.innerHTML = `
+            <h3>📊 Resultado final</h3>
+            <div class="result-summary">🎯 Aciertos: ${correctCount} de 20 (${percent}%)</div>
+            <div class="result-detail">${detailsHtml}</div>
+            <button id="closeResultsBtn" class="btn btn-secondary" style="margin-top: 10px; width:100%;">✖ Cerrar resumen</button>
+        `;
+        resultsPanel.style.display = 'block';
+        document.getElementById('closeResultsBtn')?.addEventListener('click', () => {
+            resultsPanel.style.display = 'none';
+        });
+        alert(`📊 Cuestionario completado.\nAciertos: ${correctCount} de 20 (${percent}%)\nRevisa el resumen detallado en pantalla.`);
+    }
+
+    function nextQuestion() {
+        if (currentIndex < 19) {
+            currentIndex++;
+            renderCurrentQuestion();
+        } else {
+            const unanswered = userAnswers.filter(a => a === null).length;
+            if (unanswered > 0) {
+                if (confirm(`Aún tienes ${unanswered} pregunta(s) sin responder. ¿Deseas finalizar de todas formas? Las no respondidas se contarán como incorrectas.`)) {
+                    showFinalResults();
+                }
+            } else {
+                showFinalResults();
+            }
+        }
+    }
+
+    function prevQuestion() {
+        if (currentIndex > 0) {
+            currentIndex--;
+            renderCurrentQuestion();
+        } else {
+            alert("Ya estás en la primera pregunta.");
+        }
+    }
+
+    function resetQuiz() {
+        if (confirm("¿Reiniciar todo el cuestionario? Se perderán todas las respuestas.")) {
+            userAnswers = new Array(20).fill(null);
+            currentIndex = 0;
+            resultsPanel.style.display = 'none';
+            updateLiveScore();
+            renderCurrentQuestion();
+        }
+    }
+
+    prevBtn.addEventListener('click', prevQuestion);
+    nextBtn.addEventListener('click', nextQuestion);
+    resetBtn.addEventListener('click', resetQuiz);
+
+    renderCurrentQuestion();
+    updateLiveScore();
+</script>
+</body>
+</html>
